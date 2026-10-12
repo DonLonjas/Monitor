@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitor | Server Dashboard</title>
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="stylesheet" href="styles.css?v=11">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="preload" href="/fonts/archivo-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/alegreya-sans-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+  <meta name="theme-color" content="#e8e6e1" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#131314" media="(prefers-color-scheme: dark)">
+</head>
+<body>
+  <aside class="app-sidebar">
+    <div class="sidebar-header">
+      <a href="/" class="sidebar-logo">
+        <div class="sidebar-logo-icon">
+          <img src="/logo.png" alt="" width="36" height="36" class="sidebar-logo-icon-img">
+        </div>
+        <div class="sidebar-logo-text">Monitor</div>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Monitoring</div>
+      <a href="/" class="sidebar-link active">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="8" rx="3"/><rect x="3" y="12" width="18" height="8" rx="3"/><line x1="7" y1="8" x2="7" y2="8.01"/><line x1="7" y1="16" x2="7" y2="16.01"/></svg>
+        Dashboard
+      </a>
+      <div class="sidebar-section-label">Management</div>
+      <a href="https://pm2.andreslancheros.dev" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"></polyline><line x1="12" y1="12" x2="20" y2="7.5"></line><line x1="12" y1="12" x2="12" y2="21"></line><line x1="12" y1="12" x2="4" y2="7.5"></line></svg>
+        PM2 WebUI
+      </a>
+      <a href="https://pm2.andreslancheros.dev/tunnels" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 20h-10a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2z"></path><path d="M6 20v-13a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v13"></path><path d="M3 20h6"></path></svg>
+        Cloudflare Tunnels
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar" id="hostAvatar">?</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="connectionText">Conectando</div>
+          <div class="sidebar-user-role" id="hostInfo">Cargando...</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="app-main">
+    <div class="app-topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" onclick="document.querySelector('.app-sidebar').classList.toggle('open')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <h1>Server Dashboard</h1>
+      </div>
+      <div class="topbar-stats">
+        <div class="topbar-stat">
+          <span class="topbar-stat-label">Uptime</span>
+          <span class="topbar-stat-value" id="uptime">--</span>
+        </div>
+        <div class="topbar-stat">
+          <span class="topbar-stat-label">CPU</span>
+          <span class="topbar-stat-value highlight" id="heroCpu">--</span>
+        </div>
+        <div class="topbar-stat">
+          <span class="topbar-stat-label">RAM</span>
+          <span class="topbar-stat-value highlight" id="heroRam">--</span>
+        </div>
+      </div>
+    </div>
+
+    <main class="dashboard">
+      <section class="panel panel-cpu">
+        <div class="panel-header">
+          <div class="panel-title">
+            <div class="panel-icon icon-cpu">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+            </div>
+            <div>
+              <h2>Procesador</h2>
+              <span class="panel-subtitle" id="cpuModel">--</span>
+            </div>
+          </div>
+          <span class="badge" id="cpuCores">--</span>
+        </div>
+        <div class="panel-body">
+          <div class="gauge-row">
+            <div class="gauge">
+              <svg viewBox="0 0 120 120" class="gauge-svg">
+                <circle cx="60" cy="60" r="50" class="gauge-bg"></circle>
+                <circle cx="60" cy="60" r="50" class="gauge-fg" id="cpuGaugeFg"></circle>
+              </svg>
+              <div class="gauge-text">
+                <span id="cpuLoad">0</span><span class="unit">%</span>
+              </div>
+            </div>
+            <div class="gauge-info">
+              <div class="info-row"><span>Velocidad</span><strong id="cpuSpeed">--</strong></div>
+              <div class="info-row"><span>Temperatura</span><strong id="cpuTemp">--</strong></div>
+              <div class="info-row"><span>Promedio por núcleo</span><strong id="cpuPerCoreAvg">--</strong></div>
+            </div>
+          </div>
+          <div class="cores" id="cores"></div>
+          <div class="chart-wrap">
+            <canvas id="cpuHistory"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel-mem">
+        <div class="panel-header">
+          <div class="panel-title">
+            <div class="panel-icon icon-mem">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 19v-3"/><path d="M10 19v-3"/><path d="M14 19v-3"/><path d="M18 19v-3"/><path d="M8 11V9"/><path d="M16 11V9"/><path d="M12 11V9"/><path d="M2 15h20"/><path d="M2 7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v1.1a2 2 0 0 0 0 3.837V17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-5.1a2 2 0 0 0 0-3.837Z"/></svg>
+            </div>
+            <div>
+              <h2>Memoria RAM</h2>
+              <span class="panel-subtitle" id="ramTotal">--</span>
+            </div>
+          </div>
+          <span class="badge badge-ok" id="ramPct">0%</span>
+        </div>
+        <div class="panel-body">
+          <div class="bar-big">
+            <div class="bar-fill" id="ramBar"></div>
+            <div class="bar-label">
+              <span id="ramUsed">0</span> / <span id="ramTotalVal">0</span>
+            </div>
+          </div>
+          <div class="info-grid">
+            <div class="info-row"><span>En uso</span><strong id="ramUsedVal">--</strong></div>
+            <div class="info-row"><span>Libre</span><strong id="ramFreeVal">--</strong></div>
+            <div class="info-row"><span>Swap usado</span><strong id="swapVal">--</strong></div>
+            <div class="info-row"><span>Swap libre</span><strong id="swapFreeVal">--</strong></div>
+          </div>
+          <div class="chart-row">
+            <div class="chart-wrap">
+              <canvas id="memHistory"></canvas>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="swapHistory"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel-disk">
+        <div class="panel-header">
+          <div class="panel-title">
+            <div class="panel-icon icon-disk">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V14A9 3 0 0 0 21 14V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>
+            </div>
+            <div>
+              <h2>Almacenamiento</h2>
+              <span class="panel-subtitle">Filesystems y discos</span>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="section-subtitle">Filesystems</div>
+          <div id="diskContent" class="disk-list">
+            <div class="placeholder">Cargando...</div>
+          </div>
+          <div class="section-subtitle">Discos físicos</div>
+          <div id="physicalDiskContent" class="disk-list">
+            <div class="placeholder">Cargando...</div>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="diskHistory"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel-net">
+        <div class="panel-header">
+          <div class="panel-title">
+            <div class="panel-icon icon-net">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
+            </div>
+            <div>
+              <h2>Red</h2>
+              <span class="panel-subtitle">Tráfico en tiempo real</span>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="net-main">
+            <div class="net-stat">
+              <span class="net-arrow down">↓</span>
+              <div>
+                <div class="net-val" id="netRx">0</div>
+                <div class="net-label">Download</div>
+              </div>
+            </div>
+            <div class="net-stat">
+              <span class="net-arrow up">↑</span>
+              <div>
+                <div class="net-val" id="netTx">0</div>
+                <div class="net-label">Upload</div>
+              </div>
+            </div>
+          </div>
+          <div class="chart-row">
+            <div class="chart-wrap">
+              <canvas id="netHistoryDown"></canvas>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="netHistoryUp"></canvas>
+            </div>
+          </div>
+          <div id="netList" class="net-list"></div>
+        </div>
+      </section>
+
+      <section class="panel panel-sys">
+        <div class="panel-header">
+          <div class="panel-title">
+            <div class="panel-icon icon-sys">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M7 20h10"/><path d="M9 16v4"/><path d="M15 16v4"/></svg>
+            </div>
+            <div>
+              <h2>Sistema</h2>
+              <span class="panel-subtitle">Información general</span>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="info-grid">
+            <div class="info-row"><span>Hostname</span><strong id="sysHost">--</strong></div>
+            <div class="info-row"><span>Sistema operativo</span><strong id="sysOs">--</strong></div>
+            <div class="info-row"><span>Kernel</span><strong id="sysKernel">--</strong></div>
+            <div class="info-row"><span>Arquitectura</span><strong id="sysArch">--</strong></div>
+          </div>
+          <div id="batteryInfo" class="battery hidden">
+            <div class="section-subtitle">Batería</div>
+            <div class="bar-big">
+              <div class="bar-fill" id="batteryBar"></div>
+              <div class="bar-label">
+                <span id="batteryPct">0%</span>
+                <span id="batteryStatus"></span>
+              </div>
+            </div>
+            <div class="info-row"><span>Tiempo restante</span><strong id="batteryTime">--</strong></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Monitor · Actualización cada 2s</span>
+      <span id="lastUpdate">--</span>
+    </footer>
+  </div>
+
+  <script src="script.js?v=8"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+node_modules/
+*.copseg
+.env
+.DS_Store

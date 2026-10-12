@@ -1,0 +1,13 @@
+{
+  "name": "system-monitor",
+  "version": "1.0.0",
+  "description": "Dashboard de monitoreo del sistema (CPU, RAM, GPU, disco, red)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "systeminformation": "^5.23.5"
+  }
+}
